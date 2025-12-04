@@ -2,38 +2,42 @@
 % Please edit documentation in R/heatmap_matrix_long.R
 \name{heatmap_matrix_long}
 \alias{heatmap_matrix_long}
-\title{Prepare ordered heatmap matrix and long-format data}
+\title{Prepare ordered matrix and long-format data (first column as labels)}
 \usage{
 heatmap_matrix_long(df, cluster_rows = TRUE, cluster_cols = TRUE)
 }
 \arguments{
-\item{df}{data.frame with a column `gene_label` and additional numeric columns
-representing samples.}
+\item{df}{data.frame whose first column is the row-label column; remaining
+columns must be numeric.}
 
 \item{cluster_rows}{logical. If TRUE and there are at least 2 rows, perform
-hierarchical clustering on rows (Euclidean distance, complete linkage) to
-define row order.}
+hierarchical clustering on rows (Euclidean distance, complete linkage).}
 
 \item{cluster_cols}{logical. If TRUE and there are at least 2 columns, perform
-hierarchical clustering on columns (Euclidean distance, complete linkage) to
-define column order.}
+hierarchical clustering on columns (Euclidean distance, complete linkage).}
 }
 \value{
 A list with:
   - matrix_long: data.frame with columns `row`, `col`, `value`
-  - x_labels: character vector of column (sample) labels in display order
-  - y_labels: character vector of row (gene) labels in display order
+  - x_labels: character vector of column labels (from numeric columns) in order
+  - y_labels: character vector of row labels (from first column) in order
 }
 \description{
-Takes a data frame containing a `gene_label` column and numeric expression
-columns (samples), builds a numeric matrix, optionally clusters rows/columns,
-reorders the matrix and labels, and returns a long-format data.frame suitable
-for JSON serialization alongside axis labels.
+Expects a data frame where the first column contains row labels and all
+remaining columns are numeric. Builds a numeric matrix, optionally clusters
+rows/columns, reorders the matrix and labels, and returns a long-format
+data.frame alongside axis labels.
 }
 \examples{
-# Example assuming df has gene_label + sample columns
-# df <- data.frame(gene_label = paste0("G", 1:5), S1 = rnorm(5), S2 = rnorm(5))
-# out <- heatmap_matrix_long(df, cluster_rows = TRUE, cluster_cols = TRUE)
-# str(out$matrix_long)
+set.seed(1)
+df <- data.frame(
+  label = paste0("G", 1:5),
+  S1 = rnorm(5),
+  S2 = rnorm(5),
+  S3 = rnorm(5),
+  check.names = FALSE
+)
+out <- heatmap_matrix_long(df, cluster_rows = TRUE, cluster_cols = TRUE)
+head(out$matrix_long)
 
 }
